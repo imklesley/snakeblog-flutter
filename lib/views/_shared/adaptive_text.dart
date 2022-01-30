@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -10,14 +12,16 @@ class AdaptiveText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (kIsWeb) {
+    if (kIsWeb || Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
       return SelectableText(
         text,
         style: style,
       );
-    }
-    else {
-      return Text(text, style: style,);
+    } else {
+      return Text(
+        text,
+        style: style,
+      );
     }
   }
 }

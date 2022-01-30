@@ -16,6 +16,7 @@ class LogoSnakeBlog extends StatelessWidget {
 
     return InkWell(
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           RichText(
               text: const TextSpan(

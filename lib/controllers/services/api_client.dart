@@ -1,9 +1,13 @@
-import 'dart:io';
+import 'dart:convert';
+import 'package:blog_snake/controllers/stores/app_store.dart';
+import 'package:blog_snake/models/post_model.dart';
 import "package:dio/dio.dart";
 import 'package:dio/native_imp.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class APIClient {
+
   // Singleton Pattern
   static final APIClient _instance = APIClient._internal();
 
@@ -14,17 +18,9 @@ class APIClient {
   final Dio _dio = CustomDio();
 
   Future get(String url) async {
-    Map<String, dynamic>? responseJson;
+    final response = await _dio.get(url);
 
-    try {
-      final response = await _dio.get(url);
-
-      responseJson = parseResponse(response);
-    } on DioError catch (e) {
-      parseResponse(e.response!.data);
-    }
-
-    return responseJson;
+    return response.data;
   }
 
   Future post(String url,
@@ -32,49 +28,77 @@ class APIClient {
       body,
       encoding,
       List<MapEntry<String, MultipartFile>>? files}) async {
-    Map<String, dynamic>? responseJson;
+    FormData data = FormData.fromMap(body);
 
-    try {
-      FormData data = FormData.fromMap(body);
-
-      if (files != null) {
-        data.files.addAll(files);
-      }
-
-      final response = await _dio.post(url,
-          data: data,
-          options: Options(headers: headers, contentType: encoding));
-
-      responseJson = parseResponse(response);
-    } on DioError catch (e) {
-      // print(e.response?.data);
-      parseResponse(e.response!);
+    if (files != null) {
+      data.files.addAll(files);
     }
 
-    return responseJson;
+    final response = await _dio.post(url,
+        data: data, options: Options(headers: headers, contentType: encoding));
+
+    return response.data;
+  }
+
+
+
+  Future patch(String url,
+      {Map<String, dynamic>? headers,
+        body,
+        encoding,
+        List<MapEntry<String, MultipartFile>>? files}) async {
+    FormData data = FormData.fromMap(body);
+
+    if (files != null) {
+      data.files.addAll(files);
+    }
+
+    final response = await _dio.patch(url,
+        data: data, options: Options(headers: headers, contentType: encoding));
+
+    return response.data;
+  }
+
+  Future<String> delete(PostModel post) async {
+    String url = '/blog/${post.slug}/delete';
+
+    Response response = await _dio.delete(url);
+
+    return response.data['detail'];
   }
 }
 
 class ApiInterceptors extends Interceptor {
   @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    // TODO: Recuperar do device
-    options.headers.addAll(
-        {"Authorization": "Token 74d18e4f5b018f91d694ca9ce58c32cdbd2cea2e"});
+  void onRequest(
+      RequestOptions options, RequestInterceptorHandler handler) async {
+
+
+    // Logica que pega o token do usuário salvo e adiciona aos headers em cada operação que ele faz
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
+
+    if (_prefs.containsKey(userKey)) {
+      dynamic data = _prefs.getString(userKey);
+
+      if (data != null) {
+        data = jsonDecode(data);
+        options.headers.addAll({
+          "Authorization": "Token ${data['token']}",
+        });
+      }
+    }
+
     return super.onRequest(options, handler);
   }
 
   @override
-  void onError(DioError error, ErrorInterceptorHandler handler) {
-    if (error.response!.statusCode == HttpStatus.unauthorized) {
-      // TODO: Fazer lógica de nova autenticação para usuário com token vencido
-    }
-    return super.onError(error, handler);
+  dynamic onError(DioError err, ErrorInterceptorHandler handler) {
+    return super.onError(err, handler);
   }
 
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
-    //TODO:
+
     return super.onResponse(response, handler);
   }
 }
@@ -91,6 +115,7 @@ class CustomDio extends DioForNative {
 
 dynamic parseResponse(Response response) {
   if (response.statusCode != null) {
+    print(response.statusCode);
     // TODO: Make the others success code like 201,202 ...
     switch (response.statusCode) {
       case 200:
@@ -105,6 +130,8 @@ dynamic parseResponse(Response response) {
         throw Exception("You do not have permission to access this.");
       case 404:
         throw Exception('Page not found.');
+      case 429:
+        throw Exception('Too Many Requests');
       case 500:
         throw Exception("Internal Server Error.");
       case 503:

@@ -21,6 +21,7 @@ class UserModel {
 
   Map<String, dynamic> toJson() {
     final _data = <String, dynamic>{};
+    _data['token'] = token;
     _data['username'] = username;
     _data['email'] = email;
     _data['first_name'] = firstName;

@@ -1,9 +1,7 @@
 import 'package:blog_snake/config/constants.dart';
 import 'package:blog_snake/controllers/stores/web_menu_store.dart';
-import 'package:blog_snake/views/_shared/auth_buttons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 class WebMenu extends StatelessWidget {
@@ -72,7 +70,7 @@ class _WebMenuItemState extends State<WebMenuItem> {
     return InkWell(
       child: AnimatedContainer(
           duration: kDefaultDuration,
-          margin: const EdgeInsets.symmetric(horizontal: kDefaultPadding),
+          margin: const EdgeInsets.symmetric(horizontal: kDefaultPadding/2.9),
           padding: const EdgeInsets.symmetric(vertical: kDefaultPadding / 4),
           child: Text(
             widget.title,
