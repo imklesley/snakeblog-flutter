@@ -13,6 +13,9 @@ class Responsive extends StatelessWidget {
       : super(key: key);
 
 
+  static double screenWidth(BuildContext context) => MediaQuery.of(context).size.width;
+  static double screenHeight(BuildContext context) => MediaQuery.of(context).size.width;
+
   static bool isMobile(BuildContext context) =>
       MediaQuery.of(context).size.width < 650;
 

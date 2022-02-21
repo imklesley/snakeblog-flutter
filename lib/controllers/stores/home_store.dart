@@ -41,12 +41,12 @@ abstract class HomeStoreBase with Store {
 
   @action
   Future<void> getAllPosts() async {
-
     isLoading = true;
     var data = await postRepository.getPosts(null);
 
     if (data != null) {
       nextPageUrl = data['nextPage'] as String?;
+      posts.clear();
       posts.addAll(data['posts'] as List<PostModel>);
     }
 
@@ -72,7 +72,7 @@ abstract class HomeStoreBase with Store {
     isLoadingMorePosts = true;
 
     //TODO: Remover isso aqui, é somente para testar
-    await Future.delayed(const Duration(seconds: 5));
+    // await Future.delayed(const Duration(seconds: 5));
 
     var data = await postRepository.getPostsNextPage(nextPageUrl);
 
@@ -87,23 +87,25 @@ abstract class HomeStoreBase with Store {
   @action
   Future<void> createNewPost(PostModel newPost) async {
     isLoading = true;
-    posts.insert(0,await postRepository.createPost(newPost));
+    posts.insert(0, await postRepository.createPost(newPost));
     isLoading = false;
   }
-
 
   @action
   Future<PostModel?> updatePost(PostModel post) async {
     isLoading = true;
 
     PostModel? postUpdated = await postRepository.updatePost(post);
-    await getAllPosts();
+
+    if (postUpdated != null) {
+      posts[posts.indexWhere((element) => element.slug == post.slug)] =
+          postUpdated;
+    }
 
     isLoading = false;
 
     return postUpdated;
   }
-
 
   @action
   Future<String> deletePost(PostModel post) async {

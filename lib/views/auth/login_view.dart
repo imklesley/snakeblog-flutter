@@ -24,12 +24,14 @@ class LoginView extends StatelessWidget {
     } else if (!EmailValidator.validate(email)) {
       return 'Your email isn\'t valid!';
     }
+    return null;
   }
 
   String? _passwordFieldValidator(String? password) {
     if (password!.isEmpty) {
       return 'Please enter a password!';
     }
+    return null;
   }
 
   @override

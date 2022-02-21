@@ -103,7 +103,7 @@ class PostRepository implements IPostRepository {
 
       PostModel post = PostModel.fromJson(responseData['data']);
       return post;
-    } on Error catch (e) {
+    } on Error {
       data.removeWhere((key, value) => key == 'image');
       Map<String, dynamic> responseData = await _client.patch(
         url,

@@ -28,12 +28,12 @@ class PostsFeed extends StatelessWidget {
             height: kDefaultPadding * 2,
             child: ElevatedButton(
                 onPressed: () {
-                  if(_appStore.isUserAuthenticated){
+                  if (_appStore.isUserAuthenticated) {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (_) => CreatePostView()),
+                      MaterialPageRoute(builder: (_) => const CreatePostView()),
                     );
-                  }else{
+                  } else {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (_) => LoginView()),
@@ -42,7 +42,10 @@ class PostsFeed extends StatelessWidget {
                 },
                 child: const Text('Create a new blog post')),
           ),
-        const SizedBox(height: kDefaultPadding,),
+        if (Responsive.isMobile(context))
+          const SizedBox(
+            height: kDefaultPadding,
+          ),
         if (Responsive.isMobile(context)) const SearchCard(),
         if (Responsive.isMobile(context))
           const SizedBox(
@@ -57,30 +60,30 @@ class PostsFeed extends StatelessWidget {
                 )
               : _homeStore.posts.isNotEmpty
                   ? ListView.builder(
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: _homeStore.posts.length + 1,
-                      itemBuilder: (context, index) {
-                        if (index < _homeStore.posts.length) {
-                          return PostCard(post: _homeStore.posts[index]);
-                        } else if (index >= _homeStore.posts.length &&
-                            _homeStore.nextPageUrl != null) {
-                          _homeStore.getNextPage();
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemCount: _homeStore.posts.length + 1,
+              itemBuilder: (context, index) {
+                if (index < _homeStore.posts.length) {
+                  return PostCard(post: _homeStore.posts[index]);
+                } else if (index >= _homeStore.posts.length &&
+                    _homeStore.nextPageUrl != null) {
+                  _homeStore.getNextPage();
 
-                          if (_homeStore.isLoadingMorePosts) {
-                            return const Center(
-                              child: CircularProgressIndicator(
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                    kPrimaryColor),
-                              ),
-                            );
-                          } else {
-                            return Container();
-                          }
-                        } else {
-                          return Container();
-                        }
-                      })
+                  if (_homeStore.isLoadingMorePosts) {
+                    return const Center(
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                            kPrimaryColor),
+                      ),
+                    );
+                  } else {
+                    return Container();
+                  }
+                } else {
+                  return Container();
+                }
+              })
                   : SizedBox(
                       width: double.infinity,
                       child: Card(
@@ -94,7 +97,7 @@ class PostsFeed extends StatelessWidget {
                                 textAlign: TextAlign.center,
                                 style: TextStyle(fontSize: 25),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: kDefaultPadding,
                               ),
                               ElevatedButton(

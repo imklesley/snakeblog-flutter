@@ -26,13 +26,98 @@ class CustomAppBar extends StatelessWidget {
       color: kDarkBlackColor,
       child: Column(
         children: [
-          Container(
-            padding: const EdgeInsets.all(kDefaultPadding),
-            constraints: const BoxConstraints(maxWidth: kMaxWidth),
-            // TODO: Resolver essa gambiarra aqui... fica dando warning de que não há necessidade de observer quando o elemento não está sendo visto na tela -- Isso só acontece quando vai pra tela mobile
-            child: !Responsive.isMobile(context)
-                ? Observer(builder: (context) {
-                    return Row(
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.all(kDefaultPadding),
+              constraints: const BoxConstraints(maxWidth: kMaxWidth),
+              // TODO: Resolver essa gambiarra aqui... fica dando warning de que não há necessidade de observer quando o elemento não está sendo visto na tela -- Isso só acontece quando vai pra tela mobile
+              child: !Responsive.isMobile(context)
+                  ? Observer(builder: (context) {
+                      return Row(
+                        children: [
+                          if (!Responsive.isDesktop(context))
+                            IconButton(
+                              icon: const Icon(
+                                Icons.menu,
+                                color: Colors.white,
+                              ),
+                              onPressed: () {
+                                _homeStore.toggleDrawer();
+                              },
+                            ),
+                          if (Responsive.isMobile(context)) const Spacer(),
+                          const LogoSnakeBlog(),
+                          if (!Responsive.isMobile(context)) const Spacer(),
+                          if (Responsive.isDesktop(context)) const WebMenu(),
+                          const Spacer(),
+                          if (!Responsive.isMobile(context))
+                            const SocialButtons(),
+                          if (!Responsive.isMobile(context) &&
+                              !_appStore.isUserAuthenticated)
+                            Row(
+                              children: const [
+                                SizedBox(
+                                  width: kDefaultPadding / 1.5,
+                                ),
+                                LoginButton(),
+                                SizedBox(
+                                  width: kDefaultPadding / 1.5,
+                                ),
+                                RegisterButton(),
+                              ],
+                            ),
+                          if (!Responsive.isMobile(context) &&
+                              _appStore.isUserAuthenticated)
+                            Row(
+                              children: [
+                                const SizedBox(
+                                  width: kDefaultPadding,
+                                ),
+                                RichText(
+                                  text: TextSpan(
+                                    text: 'Hello, ',
+                                    style: const TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold),
+                                    children: [
+                                      TextSpan(
+                                          text: _appStore.user!.firstName,
+                                          style: const TextStyle(
+                                              color: kPrimaryColor,
+                                              fontWeight: FontWeight.bold)),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: kDefaultPadding/2,
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.push(context, MaterialPageRoute(builder: (_)=>UserPostsView()));
+                                  },
+                                  child: const Text(
+                                    'My Posts',
+                                    style: TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: kDefaultPadding,
+                                ),
+                                ElevatedButton(
+                                    onPressed: () {
+                                      _appStore.logoutUser();
+                                    },
+                                    child: const Text(
+                                      'Logout',
+                                      style:
+                                          TextStyle(fontWeight: FontWeight.bold),
+                                    ))
+                              ],
+                            )
+                        ],
+                      );
+                    })
+                  : Row(
                       children: [
                         if (!Responsive.isDesktop(context))
                           IconButton(
@@ -49,8 +134,7 @@ class CustomAppBar extends StatelessWidget {
                         if (!Responsive.isMobile(context)) const Spacer(),
                         if (Responsive.isDesktop(context)) const WebMenu(),
                         const Spacer(),
-                        if (!Responsive.isMobile(context))
-                          const SocialButtons(),
+                        if (!Responsive.isMobile(context)) const SocialButtons(),
                         if (!Responsive.isMobile(context) &&
                             !_appStore.isUserAuthenticated)
                           Row(
@@ -83,97 +167,15 @@ class CustomAppBar extends StatelessWidget {
                                         text: _appStore.user!.firstName,
                                         style: const TextStyle(
                                             color: kPrimaryColor,
-                                            fontWeight: FontWeight.bold)),
+                                            fontWeight: FontWeight.bold))
                                   ],
                                 ),
-                              ),
-                              const SizedBox(
-                                width: kDefaultPadding/2,
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.push(context, MaterialPageRoute(builder: (_)=>UserPostsView()));
-                                },
-                                child: const Text(
-                                  'My Posts',
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                              const SizedBox(
-                                width: kDefaultPadding,
-                              ),
-                              ElevatedButton(
-                                  onPressed: () {
-                                    _appStore.logoutUser();
-                                  },
-                                  child: const Text(
-                                    'Logout',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
-                                  ))
+                              )
                             ],
                           )
                       ],
-                    );
-                  })
-                : Row(
-                    children: [
-                      if (!Responsive.isDesktop(context))
-                        IconButton(
-                          icon: const Icon(
-                            Icons.menu,
-                            color: Colors.white,
-                          ),
-                          onPressed: () {
-                            _homeStore.toggleDrawer();
-                          },
-                        ),
-                      if (Responsive.isMobile(context)) const Spacer(),
-                      const LogoSnakeBlog(),
-                      if (!Responsive.isMobile(context)) const Spacer(),
-                      if (Responsive.isDesktop(context)) const WebMenu(),
-                      const Spacer(),
-                      if (!Responsive.isMobile(context)) const SocialButtons(),
-                      if (!Responsive.isMobile(context) &&
-                          !_appStore.isUserAuthenticated)
-                        Row(
-                          children: const [
-                            SizedBox(
-                              width: kDefaultPadding / 1.5,
-                            ),
-                            LoginButton(),
-                            SizedBox(
-                              width: kDefaultPadding / 1.5,
-                            ),
-                            RegisterButton(),
-                          ],
-                        ),
-                      if (!Responsive.isMobile(context) &&
-                          _appStore.isUserAuthenticated)
-                        Row(
-                          children: [
-                            const SizedBox(
-                              width: kDefaultPadding,
-                            ),
-                            RichText(
-                              text: TextSpan(
-                                text: 'Hello, ',
-                                style: const TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold),
-                                children: [
-                                  TextSpan(
-                                      text: _appStore.user!.firstName,
-                                      style: const TextStyle(
-                                          color: kPrimaryColor,
-                                          fontWeight: FontWeight.bold))
-                                ],
-                              ),
-                            )
-                          ],
-                        )
-                    ],
-                  ),
+                    ),
+            ),
           ),
         ],
       ),

@@ -96,11 +96,6 @@ class ApiInterceptors extends Interceptor {
     return super.onError(err, handler);
   }
 
-  @override
-  void onResponse(Response response, ResponseInterceptorHandler handler) {
-
-    return super.onResponse(response, handler);
-  }
 }
 
 class CustomDio extends DioForNative {

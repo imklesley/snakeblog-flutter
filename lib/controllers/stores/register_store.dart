@@ -47,12 +47,14 @@ abstract class RegisterStoreBase with Store {
     if (firstName!.isEmpty) {
       return 'Fill this field!';
     }
+    return null;
   }
 
   String? usernameValidator(String? firstName) {
     if (firstName!.isEmpty) {
       return 'Fill this field!';
     }
+    return null;
   }
 
   String? cpfValidator(String? cpf) {
@@ -61,6 +63,7 @@ abstract class RegisterStoreBase with Store {
     } else if (!CPFValidator.isValid(cpf)) {
       return 'Your CPF is invalid!';
     }
+    return null;
   }
 
   String? emailValidator(String? email) {
@@ -69,6 +72,7 @@ abstract class RegisterStoreBase with Store {
     } else if (!EmailValidator.validate(email)) {
       return 'Your e-mail is invalid!';
     }
+    return null;
   }
 
   String? passwordValidator(String? password) {
@@ -79,6 +83,7 @@ abstract class RegisterStoreBase with Store {
     } else if (!isPasswordsIdentical) {
       return 'The passwords entered are not the same';
     }
+    return null;
   }
 
   @action

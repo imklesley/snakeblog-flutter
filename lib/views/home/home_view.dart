@@ -26,24 +26,27 @@ class HomeView extends StatelessWidget {
     return SafeArea(
         child: Scaffold(
       key: _homeStore.scaffoldKey,
-      drawer: !Responsive.isDesktop(context) ? const CustomDrawer() : null,
+      drawer: !Responsive.isDesktop(context) ? CustomDrawer() : null,
       floatingActionButton: Tooltip(
         message: 'Create a new blog post',
-        child: Responsive.isMobile(context)?FloatingActionButton(onPressed: () {
-
-          if(_appStore.isUserAuthenticated){
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => CreatePostView()),
-            );
-          }else{
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => LoginView()),
-            );
-          }
-
-        },child: const Icon(Icons.add),):null,
+        child: Responsive.isMobile(context)
+            ? FloatingActionButton(
+                onPressed: () {
+                  if (_appStore.isUserAuthenticated) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const CreatePostView()),
+                    );
+                  } else {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => LoginView()),
+                    );
+                  }
+                },
+                child: const Icon(Icons.add),
+              )
+            : null,
       ),
       appBar: const PreferredSize(
         preferredSize: Size.fromHeight(88),
@@ -51,7 +54,7 @@ class HomeView extends StatelessWidget {
       ),
       body: SingleChildScrollView(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             const TopBanner(),
             const SizedBox(
@@ -86,7 +89,7 @@ class HomeView extends StatelessWidget {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (_) => CreatePostView()),
+                                        builder: (_) => const CreatePostView()),
                                   );
                                 },
                                 child: const Text('Create a new blog post')),

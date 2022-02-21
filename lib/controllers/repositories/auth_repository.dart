@@ -18,6 +18,7 @@ class AuthRepository implements IAuthRepository {
       // print(data);
       return UserModel.fromJson(data['data']['user']);
     }
+    return null;
   }
 
   @override
